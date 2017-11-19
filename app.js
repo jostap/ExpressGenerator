@@ -25,7 +25,6 @@ connect.then((db) => {
   console.log('Connected correctly to server');
 }, (err) => { console.log(err); });
 
-
 var app = express();
 
 // view engine setup
