@@ -42,6 +42,6 @@ exports.verifyAdmin = function(req, res, next) {
         next(err);
     }
     else {
-        next();
+        return next();
     }
 };
