@@ -7,7 +7,7 @@ const cors = require('./cors');
 const Leaders = require('../models/leaders');
 
 const leaderRouter = express.Router();
-leaderRouter.user(bodyParser.json());
+leaderRouter.use(bodyParser.json());
 
 leaderRouter.route('/')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })

@@ -27,7 +27,7 @@ favoriteRouter.route('/')
         if (err) return next(err);
 
         if (!favorite) {
-            Favorites.create({ user: req.user_id })
+            Favorites.create({ user: req.user._id })
             .then((favorite) => {
                 for (i = 0; i < req.body.length; i++)
                     if (favorite.dishes.indexOf(req.body[i]._id) < 0)
@@ -70,7 +70,7 @@ favoriteRouter.route('/')
     res.end('PUT operation not supported on /favorites');
 })
 .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    Favorites.findOneAndRemove({ user: req.user._id }, (err, favorite) => {
+    Favorites.findOneAndRemove({ user: req.user._id }, (err, resp) => {
         if (err) return next(err);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
@@ -108,10 +108,10 @@ favoriteRouter.route('/:dishId')
         if (err) return next(err);
 
         if (!favorite) {
-            Favorites.create({ user: req.user_id })
+            Favorites.create({ user: req.user._id })
             .then((favorite) => {
                 favorite.dishes.push({ "_id": req.params.dishId});
-                favorite(save)
+                favorite.save()
                 .then((favorite) => {
                     console.log('Favorite Created!');
                     res.statusCode = 200;
@@ -129,7 +129,7 @@ favoriteRouter.route('/:dishId')
         else {
             if (favorite.dishes.indexOf(req.params.dishId) < 0) {
                 favorite.dishes.push({ "_id": req.params.dishId});
-                favorite(save)
+                favorite.save()
                 .then((favorite) => {
                     console.log('Favorite Dish Added!');
                     res.statusCode = 200;
@@ -160,8 +160,7 @@ favoriteRouter.route('/:dishId')
         var index = favorite.dishes.indexOf(req.params.dishId);
         if (index >= 0) {
             favorite.dishes.splice(index, 1);
-            favorite.dishes.push({ "_id": req.params.dishId});
-            favorite(save)
+            favorite.save()
             .then((favorite) => {
                 Favorites.findById(favorite._id)
                 .populate('user')
@@ -170,7 +169,7 @@ favoriteRouter.route('/:dishId')
                     console.log('Favorite Dish Deleted!', favorite);
                     res.statusCode = 200;
                     res.setHeader('Content-Type', 'application/json');
-                    return res.json(favorite);
+                    res.json(favorite);
                 })
                 
             })
